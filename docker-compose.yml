@@ -16,16 +16,16 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: ./react-frontend
+      dockerfile: Dockerfile
     container_name: frontend
     networks:
       - app-network
 
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile.backend
+      context: ./springboot-backend
+      dockerfile: Dockerfile
     container_name: backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/mydatabase
