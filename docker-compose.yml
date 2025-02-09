@@ -16,15 +16,6 @@ services:
       - app-network
 
   # React frontend service
-  frontend:
-    build:
-      context: ./react-frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    networks:
-      - app-network
-
-  # Spring Boot backend service
   backend:
     build:
       context: ./springboot-backend
@@ -35,7 +26,24 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: rootpass
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./react-frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    depends_on:
+      backend:
+        condition: service_healthy
     networks:
       - app-network
 
